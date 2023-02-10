@@ -1,0 +1,3 @@
+int XDisplayHeight(dis, 0); (display, screen number)
+int XDisplayWidth(dis, 0);
+int XDisplayHeightMM(dis, 0);
