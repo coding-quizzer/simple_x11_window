@@ -15,7 +15,7 @@ int screen;
 Window win;
 GC gc;
 Cursor main_cursor;
-unsigned long black, white, red, blue;
+unsigned long black, white, red, blue, green;
 int current_font = XC_X_cursor;
 
 void init();
@@ -51,7 +51,7 @@ int main () {
       }
 
       if(text[0] == 'd') {
-        current_font = (current_font + 1) % 154;
+        current_font = (current_font + 2) % 154;
         main_cursor = XCreateFontCursor(dis, (current_font) % 154);
         XDefineCursor(dis, win, main_cursor);
       }
@@ -70,8 +70,11 @@ int main () {
       int x=event.xbutton.x, y=event.xbutton.y;
       XSetForeground(dis,gc,red);
       XDrawLine(dis,win,gc,dot.x,dot.y,x,y);
+      XSetForeground(dis, gc, green);
+      XFillRectangle(dis, win, gc, x -20, y - 20, 40, 40);
       XSetForeground(dis,gc,blue);
       strcpy(text, "Hello World");
+      // XActivateScreenSaver(dis);
       
       XDrawString(dis,win,gc,x,y,text,strlen(text));
       dot.x = x;
@@ -91,12 +94,18 @@ void init () {
   white=WhitePixel(dis, screen);
   red=RGB(255,0,0);
   blue=RGB(0,0,255);
+  //#96efbe
+  green=RGB(150, 239, 190);
   win=XCreateSimpleWindow(dis, DefaultRootWindow(dis), 0, 0, 300, 300, 10, red, white);
   main_cursor = XCreateFontCursor(dis, current_font);
   XDefineCursor(dis, win, main_cursor);
   XSetStandardProperties(dis, win, "Howdy", "Hi", None, NULL, 0, NULL);
   XSelectInput(dis, win, ExposureMask | ButtonPressMask | KeyPressMask);
   gc=XCreateGC(dis, win, 0, 0);
+  XGCValues newGCValues;
+  newGCValues.fill_rule = FillSolid;
+  newGCValues.line_style = LineDoubleDash;
+  XChangeGC(dis, gc, GCFillRule|GCLineStyle, &newGCValues);
   XSetBackground(dis,gc,white);
   XSetForeground(dis, gc, black);
   XClearWindow(dis, win);
